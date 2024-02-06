@@ -1,0 +1,241 @@
+---
+import Card from '../components/Card.astro';
+import HeroHead from '../components/HeroHead.astro';
+import { Linkedin, Github, FileText } from 'lucide-astro'
+
+---
+
+<div class="hero-grid">
+	<Card>
+		<div class="px-6">
+			<h2 class="text-gradient text-5xl font-bold">Rodrigo Calábria</h2>
+			<p>Desenvolvedor Full-Stack. React, Node, Typescript</p>
+		</div>
+	</Card>
+	<Card square>
+		<!-- <img src="assets/hero-pic.png" alt="me-emoji"> -->
+		<HeroHead class="model"/>
+	</Card>
+	<Card square>
+		🖱️
+	</Card>
+	<Card>
+		<p>Desenvolvedor Full-Stack. React, Node, Typescript</p>
+	</Card>
+	<ul class="hero-menu">
+		<li><a href="#">
+			<span>Sobre</span>
+		</a></li>
+		<li><a href="#">
+			<span>Projetos</span>
+		</a></li>
+		<li><a href="#">
+			<span>Contato</span>
+		</a></li>
+		<li><a href="#">
+			<span class="icon top-[-29px]">
+				<Linkedin size="18"/>
+			</span>
+			<span>LinkedIn</span>
+		</a></li>
+		<li><a href="#">
+			<span class="icon">
+				<Github size="18"/>
+			</span>
+			<span>GitHub</span>
+		</a></li>
+		<li class="highlight"><a href="#">
+			<span class="icon">
+				<FileText size="18"/>
+			</span>
+			<span>Currículo</span>
+		</a></li>
+	</ul>
+</div>
+<style lang="scss">
+
+	.hero-grid {
+		width: 100%;
+		display: flex;
+		flex-wrap: wrap;
+		gap: 2rem;
+		padding: 1rem;
+		
+
+		.model {
+			position: absolute;
+			top: -25px;
+			left: -25px;
+		}
+		
+		.hero-menu {
+			display: flex;
+			gap: 1.5rem;
+			justify-content: space-between;
+			align-items: center;
+			// width: 100%;
+			margin: 0 auto;
+			height: fit-content;
+			padding: 0.3rem 0.37rem;
+			border-radius: 99px;
+			border: solid 1px white;
+			// background-color: #EBF0F8;
+			background: linear-gradient(180deg, rgba(135, 146, 168, 0.11) 30%, rgba(77, 96, 133, 0.11) 100%);
+			box-shadow: 0px 2px 4px 2px rgba(21, 40, 57, 0.05) inset;
+
+				
+			li {
+				display: flex;
+				align-items: center;
+				list-style: none;
+				height: auto;
+
+				a {
+					@apply text-base;
+					text-wrap: nowrap;
+					display: inline-block;
+					border: solid 1px transparent;
+					// background-color: rgba(0, 0, 0, 0.02);
+					// border: solid 1px #fff;
+					padding: 0.4rem 1.5rem;
+					border-radius: 99px;
+					color: #707b8a;
+					// background-image: linear-gradient(90deg, #ffffff00, #fff);
+					background-size: 300% 200%;
+					background-position: 66%;
+					transition: background-position 0.5s, border-color 0.4s, box-shadow 0.3s, color 0.2s, scale 0.05s;
+
+
+					animation-name: btn-showup;
+					animation-duration: 1s;
+
+					.icon {
+						position: relative;
+						margin-right: 0.1rem;
+						top: -1px;
+					}
+
+					span:not(.icon) {
+						position: relative;
+						top: 1px;
+					}
+
+					&:hover, &:focus-visible {
+						transition: background-position 0.5s, border-color 0s, box-shadow 0.3s, color 0.2s, scale 0.05s;
+						border-color: #fff;
+						background-image: linear-gradient(90deg, #ffffff00, #ffffff00 33%, #fff 66%, #fff);
+						background-position: 28%;
+						box-shadow: 0px 2px 4px 0px rgba(21, 40, 57, 0.05);
+						color: #5a6575;
+					}
+
+					&:focus-visible {
+						outline: none;
+					}
+
+					&:active {
+						background-position: 0%;
+						box-shadow: inset 0px 0px 20px 6px rgba(255, 255, 255, 0.3);
+						scale: 0.95;
+					}
+				}
+
+				&.highlight {
+					a {
+						background-color: rgb(91, 202, 141);
+						background-image: linear-gradient(rgb(79, 211, 138) 50%, rgb(39, 158, 93)) ;
+						color: #fff;
+						text-shadow: 0 0 5px rgb(69, 172, 115);
+						
+						animation-name: btn-highlight-showup;
+						animation-duration: 1s;
+						
+						&:hover, &:focus-visible  {
+							border-color: rgb(124, 255, 183);
+							background-image: linear-gradient(90deg, #ffffff00, #ffffff00 33%, rgb(124, 255, 183) 66%, #fff), linear-gradient(rgb(79, 211, 138) 50%, rgb(39, 158, 93));
+						}
+
+						&:active {
+							box-shadow: inset 0px 0px 20px 6px rgba(207, 255, 231, 0.3);
+						}
+					}
+				}
+
+				
+
+					&:nth-child(2) a {
+						animation-delay: 0.1s;
+					}
+					&:nth-child(3) a {
+						animation-delay: 0.2s;
+					}
+					&:nth-child(4) a {
+						animation-delay: 0.3s;
+					}
+					&:nth-child(5) a {
+						animation-delay: 0.4s;
+					}
+					&:nth-child(6) a {
+						animation-delay: 0.5s;
+					}
+
+			}
+
+		}
+	}
+
+	.text-gradient {
+		background-image: var(--accent-gradient);
+		-webkit-background-clip: text;
+		-webkit-text-fill-color: transparent;
+		background-size: 400%;
+		background-position: 0%;
+	}
+
+	@keyframes btn-showup {
+		0% {
+			border: solid 1px transparent;
+			color: #707b8a;
+			background-image: linear-gradient(90deg, #ffffff00, #ffffff00 20%, #ffffff90 40%, #ffffff90 60%, #ffffff00 80%, #ffffff00 100%);
+			background-position: 0%;
+			background-size: 500% 200%;
+		}
+		50% {
+			border: solid 1px #fff;
+			color: #5a6575;
+			background-image: linear-gradient(90deg, #ffffff00, #ffffff00 20%, #ffffff90 40%, #ffffff90 60%, #ffffff00 80%, #ffffff00 100%);
+			background-position: 50%;
+			background-size: 500% 200%;
+			box-shadow: 0px 2px 4px 0px rgba(21, 40, 57, 0.05);
+		}
+		100% {
+			border: solid 1px transparent;
+			color: #707b8a;
+			background-image: linear-gradient(90deg, #ffffff00, #ffffff00 20%, #ffffff90 40%, #ffffff90 60%, #ffffff00 80%, #ffffff00 100%);
+			background-position: 100%;
+			background-size: 500% 200%;
+		}
+	}
+	
+	@keyframes btn-highlight-showup {
+		0% {
+			background-size: 500% 200%;
+			background-position: 0%;
+			background-image: linear-gradient(90deg, #ffffff00, #ffffff00 20%, rgba(124, 255, 183, 0.7) 40%, rgba(124, 255, 183, 0.7) 60%, #ffffff00 80%), linear-gradient(rgb(79, 211, 138) 50%, rgb(39, 158, 93));
+			text-shadow: 0 0 5px rgb(69, 172, 115);
+		}
+		50% {
+			background-size: 500% 200%;
+			background-position: 50%;
+			background-image: linear-gradient(90deg, #ffffff00, #ffffff00 20%, rgba(124, 255, 183, 0.7) 40%, rgba(124, 255, 183, 0.7) 60%, #ffffff00 80%), linear-gradient(rgb(79, 211, 138) 50%, rgb(39, 158, 93));
+			box-shadow: 0px 2px 4px 0px rgba(21, 40, 57, 0.05);
+			border: solid 1px rgb(124, 255, 183);
+		}
+		100% {
+			background-size: 500% 200%;
+			background-position: 100%;
+			background-image: linear-gradient(90deg, #ffffff00, #ffffff00 20%, rgba(124, 255, 183, 0.7) 40%, rgba(124, 255, 183, 0.7) 60%, #ffffff00 80%), linear-gradient(rgb(79, 211, 138) 50%, rgb(39, 158, 93));
+			text-shadow: 0 0 5px rgb(69, 172, 115);
+		}
+	}
+</style>

@@ -1,0 +1,30 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Hero from '../components/Hero.astro'
+import Skills from '../components/Skills.astro'
+---
+
+<Layout title="Rodrigo Calábria - Desenvolvedor Full-Stack">
+	<main>
+		<section class="h-svh flex items-center">
+			<Hero />
+		</section>
+		<section class="h-svh">
+			<Skills />
+		</section>
+	</main>
+</Layout>
+
+<style lang="scss">	
+	main {
+		margin: auto;
+		width: 70vw;
+		min-width: min(960px, calc(100% - 2rem));
+		max-width: 1100px;
+		height: 100%;
+		min-height: 100vh;
+		color: white;
+		font-size: 20px;
+		line-height: 1.6;
+	}
+</style>

@@ -1,0 +1,303 @@
+---
+interface Props {
+	class?: string
+}
+
+const { class: className, ...rest } = Astro.props;
+---
+
+<div id="hero-model" class={className ?? ''} {...rest}>
+
+</div>
+<script>
+	import * as THREE from 'three'
+	import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+
+	let camera: any, scene: any, renderer: any;
+
+	let object: any;
+
+	init();
+
+
+	function init() {
+
+		renderer = new THREE.WebGLRenderer( { antialias: true, alpha: true } )
+		renderer.setClearColor( 0x000000, 0 )
+		renderer.setPixelRatio( window.devicePixelRatio )
+		renderer.setSize( 290, 290 )
+		renderer.shadowMap.enabled = true
+		renderer.shadowMap.type = THREE.PCFSoftShadowMap
+		
+		document.getElementById('hero-model')!.appendChild( renderer.domElement )
+
+		// scene
+
+		scene = new THREE.Scene();
+		// scene.background = new THREE.Color( 0xffffff);
+		// const axesHelper = new THREE.AxesHelper( 5 );
+		// scene.add( axesHelper );
+
+		
+		camera = new THREE.PerspectiveCamera( 46, 1, 0.1, 300 );
+		camera.position.set(-2.1, 0, 0);
+		camera.rotation.y = -Math.PI/2
+		// const pointLight = new THREE.PointLight( 0xffffff, 15 );
+		// camera.add( pointLight );
+		scene.add( camera );
+
+
+		const ambientLight = new THREE.AmbientLight( 0x555555 );
+		scene.add( ambientLight );
+
+
+		const light1 = new THREE.DirectionalLight(0xFFFFFF, 2)
+		light1.position.set(-0.8,0.4,0.8)
+		light1.castShadow = true
+		light1.shadow.mapSize.set(512,512)
+		light1.shadow.normalBias = 0.03
+		scene.add(light1)
+
+		
+		const light2 = new THREE.DirectionalLight(0xccc2ff, 3)
+		light2.position.set(0.1,-0.5,-0.8)
+		scene.add(light2)
+
+		const light3 = new THREE.DirectionalLight(0xFFFFFF, 2)
+		light3.position.set(-0.8,0.4,-0.8)
+		light3.castShadow = true
+		light3.shadow.mapSize.set(512,512)
+		light3.shadow.normalBias = 0.03
+		scene.add(light3)
+
+		/* manager*/
+
+		function loadModel() {
+
+			object.traverse( function ( child: any ) {
+				if ( child.isMesh )
+					if(child.name === "head_no_neck" || child.name === "hair") {
+						child.castShadow = true
+						child.receiveShadow = true
+					}
+			});
+
+			object.position.y = -0.18;
+			object.position.z = 0
+			object.position.x = 0
+			object.scale.setScalar( 0.7 )
+
+			scene.add( object );
+
+			render();
+
+		}
+
+		const manager = new THREE.LoadingManager( loadModel );
+
+		// texture
+
+		// const textureLoader = new THREE.TextureLoader( manager );
+		// const texture = textureLoader.load( 'assets/hero-pic.png', render );
+		// texture.colorSpace = THREE.SRGBColorSpace;
+
+		// model
+
+		function onProgress( xhr: any ) {
+
+			if ( xhr.lengthComputable ) {
+
+				const percentComplete = xhr.loaded / xhr.total * 100;
+				console.log( 'model ' + percentComplete.toFixed( 2 ) + '% downloaded' );
+
+			}
+
+		}
+
+		function onError() {
+			console.log('ERRO')
+		}
+
+		const loader = new GLTFLoader( manager );
+		loader.load('assets/models/head.glb', (obj: any) => {
+
+			object = obj.scene;
+			lookAtMouseDelayed()
+
+		}, onProgress, onError );
+
+		//
+
+
+		//
+
+		// new OrbitControls( camera, renderer.domElement );
+		// controls.minDistance = 2;
+		// controls.maxDistance = 5;
+		// controls.addEventListener( 'change', render );
+
+		//	
+
+		
+		render();
+
+	}
+
+	function render() {
+
+		renderer.render(scene, camera);
+
+	}
+
+	const lookAtMouse = (e: any) => {
+		const mouseX = e.x
+		const mouseY = e.y
+
+		const canvasRect = renderer.domElement.getBoundingClientRect()
+		const canvasX = canvasRect.left + 145
+		const canvasY = canvasRect.top + 145
+
+		const mouseCanvasDiffX = canvasX - mouseX
+		const mouseCanvasDiffY = canvasY - mouseY
+
+		const mouseDistance = Math.sqrt(mouseCanvasDiffX**2 + mouseCanvasDiffY**2)
+
+		// console.log(mouseDistance)
+		
+		const axisX = mouseCanvasDiffX / mouseDistance
+		const axisY = mouseCanvasDiffY / mouseDistance
+		const axis = new THREE.Vector3(0, axisX, axisY)
+
+		const totalRotation = (-Math.min(mouseDistance, 500) / 3000) * Math.PI
+
+		object.setRotationFromAxisAngle(axis, totalRotation)
+		// object.rotateOnAxis(axis, 0.05)
+		// object.lookAt(mouseX, mouseY, 10)
+		render()
+	}
+
+	function precision(n: number, precision = 3) {
+		// return Number(n.toFixed(precision))
+		return Math.round(n * 1e2) / 1e2
+	}
+
+
+
+	const canvasRect = renderer.domElement.getBoundingClientRect()
+	const canvas = {
+		x: canvasRect.left + 145,
+		y: canvasRect.top + 145
+	}
+
+	let mouse = {
+		x: parseInt(canvas.x),
+		y: parseInt(canvas.y)
+	}
+
+	let isAnimating = true
+
+	const lookAtMouseDelayed = () => {
+
+		// console.log(isAnimating)
+
+		if(isAnimating)
+			requestAnimationFrame(lookAtMouseDelayed)
+		else return
+
+		if(!object) return
+
+		const mouseCanvasDiffX = canvas.x - mouse.x
+		const mouseCanvasDiffY = canvas.y - mouse.y
+
+		const mouseDistance = Math.sqrt(mouseCanvasDiffX**2 + mouseCanvasDiffY**2)
+
+		const maxAngle = -Math.PI/4
+		const angle = Math.min(mouseDistance, 500) / 500
+
+		const totalRotation = {
+			x: (mouseCanvasDiffX / mouseDistance) * maxAngle * angle,
+			y: (mouseCanvasDiffY / mouseDistance) * maxAngle * angle
+		}
+
+		const currRotation = object.rotation
+
+		const ease = 20
+
+		const stepSize = {
+			x: Math.abs(totalRotation.x - currRotation.y) / ease,
+			y: Math.abs(totalRotation.y - currRotation.z) / ease
+		}
+		const step = {
+			x: totalRotation.x < currRotation.y ? -stepSize.x : stepSize.x,
+			y: totalRotation.y < currRotation.z ? -stepSize.y : stepSize.y
+		}
+		
+		const nextRotation = new THREE.Euler(
+			0,
+			Math.max(-Math.PI, Math.min( Math.PI, currRotation.y + step.x)),
+			Math.max(-Math.PI, Math.min( Math.PI, currRotation.z + step.y)),
+			'XYZ'
+		)
+
+		// console.log('step', [step.x, step.y])
+		// console.warn('currRotation', [+currRotation.x.toFixed(8), +currRotation.y.toFixed(8), +currRotation.z.toFixed(8)])
+		// console.warn('totalRotation', [+totalRotation.x.toFixed(8), +totalRotation.y.toFixed(8)])
+		// console.log('nextRotation', [nextRotation.x, nextRotation.y, nextRotation.z])
+		// console.log('--------')
+
+		if(
+			((step.x < 0 && precision(currRotation.y) > precision(totalRotation.x)) || (step.x >= 0 && precision(currRotation.y) < precision(totalRotation.x))) || 
+			((step.y < 0 && precision(currRotation.z) > precision(totalRotation.y)) || (step.y >= 0 && precision(currRotation.z) < precision(totalRotation.y)))
+		) {
+			object.setRotationFromEuler(nextRotation)
+			render()
+		} else {
+			isAnimating = false
+		}
+	}
+
+	function onMouseMove(e: any) {
+		
+		mouse.x = e.x
+		mouse.y = e.y
+
+		if(!isAnimating)
+			requestAnimationFrame(lookAtMouseDelayed)
+
+		isAnimating = true
+
+		// if(object)
+		// 	requestAnimationFrame(() => lookAtMouseDelayed(e))
+			// document.body.removeEventListener('mousemove', onMouseMove)
+	}
+
+
+	function onScroll(e: any) {
+		console.log(e)
+
+		// requestAnimationFrame(() => lookAtMouse(e))
+		// document.body.removeEventListener('mousemove', onMouseMove)
+	}
+
+	function onMouseOut() {
+		mouse.x = parseInt(canvas.x)
+		mouse.y = parseInt(canvas.y)
+	}
+	
+	function onWindowResize() {
+
+		// camera.aspect = 1;
+		// camera.updateProjectionMatrix();
+		// renderer.setSize( window.innerWidth, window.innerHeight );
+		
+		const canvasRect = renderer.domElement.getBoundingClientRect()
+		canvas.x =  canvasRect.left + 145
+		canvas.y = canvasRect.top + 145
+	}
+
+	window.addEventListener('mouseout', onMouseOut);
+
+	window.addEventListener('resize', onWindowResize)
+
+	document.body.addEventListener('mousemove', onMouseMove)
+</script>
